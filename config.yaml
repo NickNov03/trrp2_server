@@ -1,0 +1,14 @@
+server_ip: "0.0.0.0" #'127.0.0.1'
+server_port: 20000
+
+send_type: mq
+# FnBk79gU3X&y
+
+db_name: "constructioncompany"
+db_user: "postgres"
+db_password: "postgres"
+db_host: "postgres" #"localhost"
+db_port: "5432"
+
+mq_ip: "rabbitmq"
+mq_port: 5672
