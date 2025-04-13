@@ -7,6 +7,14 @@ import json
 import pika
 
 # SOCK
+def recv_exact(conn, n):
+    data = b''
+    while len(data) < n:
+        more = conn.recv(n - len(data))
+        if not more:
+            raise EOFError("Connection closed")
+        data += more
+    return data
 
 def recv_sock():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Create a socket object
@@ -23,17 +31,19 @@ def recv_sock():
     orders = []
     buffer = b''
 
-    while True:
-        header = conn.recv(1)
-        msg_length = int.from_bytes(header, byteorder='big')
-        data = conn.recv(msg_length)  # Receive data from the client
+    buffer = b''
 
-        if not data:
+    while True:
+        try:
+            header = recv_exact(conn, 1)
+        except EOFError:
             break
 
-        print(data)
-        print(f"data type: {type(data)}, buffer type: {type(buffer)}")
+        msg_length = int.from_bytes(header, byteorder='big')
+        data = recv_exact(conn, msg_length)
+
         buffer += data
+
         while b'\n' in buffer:
             line, buffer = buffer.split(b'\n', 1)
             try:
