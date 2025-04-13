@@ -24,7 +24,9 @@ def recv_sock():
     buffer = b''
 
     while True:
-        data = conn.recv(1024)  # Receive data from the client
+        header = conn.recv(1)
+        msg_length = int.from_bytes(header, byteorder='big')
+        data = conn.recv(msg_length)  # Receive data from the client
 
         if not data:
             break
